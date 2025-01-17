@@ -1,10 +1,8 @@
+/** @type {import('ts-jest').JestConfigWithTsJest} **/
 export default {
-  transform: {
-    "^.+\\.jsx?$": "babel-jest"
-  },
-  testEnvironment: 'node',
+  testEnvironment: "node",
   setupFiles: ['<rootDir>/jest.setup.js'],
-  moduleNameMapper: {
-    '^(\\.{1,2}/.*)\\.js$': '$1',
+  transform: {
+    "^.+.tsx?$": ["ts-jest",{}],
   },
 };
