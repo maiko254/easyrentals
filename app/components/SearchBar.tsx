@@ -1,15 +1,17 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Search } from 'lucide-react'
 
 export default function SearchBar() {
-  const [location, setLocation] = useState('')
+  const [location, setLocation] = useState('');
+  const router = useRouter();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
-    // Implement search functionality here
-    console.log('Searching for:', location)
+    // Navigate to the search results page with the query parameter
+    router.push(`/search-results?query=${location}`);
   }
 
   return (
