@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import Image from 'next/image'
 
 interface Listing {
-  id: number
+  id: string
   title: string
   price: number
   bedrooms: number
@@ -16,22 +16,41 @@ export default function SearchResults() {
   const searchParams = useSearchParams()
   const query = searchParams.get('query')
   const [results, setResults] = useState<Listing[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (query) {
-      // Fetch search results based on the query
-      console.log('Fetching results for:', query)
-      
-      // Mock search results
-      const mockResults = [
-        { id: 1, title: 'Modern Downtown Apartment', price: 1500, bedrooms: 2, bathrooms: 1 },
-        { id: 2, title: 'Spacious Suburban House', price: 2200, bedrooms: 3, bathrooms: 2 },
-        { id: 3, title: 'Cozy Studio near University', price: 900, bedrooms: 1, bathrooms: 1 },
-      ]
-      
-      setResults(mockResults)
+      const fetchResults = async () => {
+        try {
+          const response = await fetch(`/api/search?query=${query}`)
+          if (!response.ok) {
+            throw new Error('Failed to fetch search results')
+          }
+          const data = await response.json()
+          setResults(data)
+        } catch (error) {
+          if (error instanceof Error) {
+            setError(error.message)
+          } else {
+            setError('An unknown error occurred')
+          }
+        } finally {
+          setLoading(false)
+        }
+      }
+
+      fetchResults()
     }
   }, [query])
+
+  if (loading) {
+    return <div>Loading...</div>
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>
+  }
 
   return (
     <section className="bg-white py-16">

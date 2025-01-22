@@ -14,25 +14,33 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const [password, setPassword] = useState('')
   const [isForgotPassword, setIsForgotPassword] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Implement login logic here
-    console.log('Login attempted with:', { email, password })
-    // After successful login, you would typically:
-    // 1. Send the credentials to your backend
-    // 2. Receive and store the authentication token
-    // 3. Update the user state in your app
-    // 4. Close the modal
-    onClose()
+    const credentials = btoa(`${email}:${password}`)
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Basic ${credentials}`,
+          'Content-Type': 'application/json',
+        },
+      })
+
+      if (!response.ok) {
+        throw new Error('Login failed')
+      }
+
+      const data = await response.json()
+      console.log('Login successful:', data)
+      onClose()
+    } catch (error) {
+      console.error('Login error:', error)
+    }
   }
 
   const handleForgotPassword = (e: React.FormEvent) => {
     e.preventDefault()
-    // Implement forgot password logic here
     console.log('Password reset requested for:', email)
-    // After sending reset email:
-    // 1. Display a success message to the user
-    // 2. Optionally close the modal or switch back to login view
     setIsForgotPassword(false)
   }
 
