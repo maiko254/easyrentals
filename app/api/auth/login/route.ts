@@ -30,5 +30,6 @@ export async function POST(req: NextRequest) {
   const token = uuid();
   const tokenExpiresIn = 60 * 60; // 1 hour
   await redisClient.set(token, user._id.toString(), { EX: tokenExpiresIn });
+  /*await db.collection('properties').insertOne({ userId: user._id, title: 'New Property', price: 0, bedrooms: 0, bathrooms: 0 });*/
   return NextResponse.json({ message: 'Login successful', token });
 }
