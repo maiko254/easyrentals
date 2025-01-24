@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { X } from 'lucide-react'
 import Link from 'next/link'
 
@@ -13,6 +14,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isForgotPassword, setIsForgotPassword] = useState(false)
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -33,6 +35,11 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       const data = await response.json()
       console.log('Login successful:', data)
       onClose()
+
+      const token = data.token;
+      localStorage.setItem('token', token)
+
+      router.push('/dashboard')
     } catch (error) {
       console.error('Login error:', error)
     }

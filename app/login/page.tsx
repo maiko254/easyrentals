@@ -27,7 +27,7 @@ export default function Login() {
 
       const data = await response.json()
       console.log('Login successful:', data)
-      router.push('/')
+      router.push('/dashboard')
     } catch (error) {
       console.error('Login error:', error)
       setError('Login failed. Please try again.')
