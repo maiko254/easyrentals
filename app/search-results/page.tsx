@@ -2,7 +2,6 @@
 
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import Image from 'next/image'
 import Link from 'next/link'
 
 interface Listing {
@@ -19,41 +18,39 @@ interface Listing {
 export default function SearchResults() {
   const searchParams = useSearchParams()
   const query = searchParams.get('query')
+  const price = searchParams.get('price')
   const [results, setResults] = useState<Listing[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [sort, setSort] = useState('price')
-  const [price, setPrice] = useState('')
   const [bedrooms, setBedrooms] = useState('')
   const [bathrooms, setBathrooms] = useState('')
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
 
   useEffect(() => {
-    if (query) {
-      const fetchResults = async () => {
-        try {
-          const response = await fetch(`/api/properties?query=${query}&sort=${sort}&price=${price}&bedrooms=${bedrooms}&bathrooms=${bathrooms}&page=${page}`)
-          if (!response.ok) {
-            throw new Error('Failed to fetch search results')
-          }
-          const data = await response.json()
-          setResults(data.properties)
-          setTotalPages(data.totalPages)
-        } catch (error) {
-          if (error instanceof Error) {
-            setError(error.message)
-          } else {
-            setError('An unknown error occurred')
-          }
-        } finally {
-          setLoading(false)
+    const fetchResults = async () => {
+      try {
+        const response = await fetch(`/api/properties?query=${query || ''}&sort=${sort}&price=${price || ''}&bedrooms=${bedrooms}&bathrooms=${bathrooms}&page=${page}`)
+        if (!response.ok) {
+          throw new Error('Failed to fetch search results')
         }
+        const data = await response.json()
+        setResults(data.properties)
+        setTotalPages(data.totalPages)
+      } catch (error) {
+        if (error instanceof Error) {
+          setError(error.message)
+        } else {
+          setError('An unknown error occurred')
+        }
+      } finally {
+        setLoading(false)
       }
-
-      fetchResults()
     }
-  }, [query, sort, price, bedrooms, bathrooms, page])
+
+    fetchResults()
+  }, [query, price, sort, bedrooms, bathrooms, page])
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -121,7 +118,7 @@ export default function SearchResults() {
             <input
               type="number"
               id="price"
-              value={price}
+              value={price || ''}
               onChange={(e) => setPrice(e.target.value)}
               className="w-full rounded-lg border px-3 py-2 focus:border-blue-500 focus:outline-none"
             />
