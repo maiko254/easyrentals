@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ message: 'User not found' }, { status: 404 });
   }
 
-  const { title, description, price, bedrooms, bathrooms } = await request.json();
+  const { title, description, price, bedrooms, bathrooms, location, image } = await request.json();
 
   const client = await clientPromise;
   const db = client.db('easyrentals');
@@ -60,12 +60,14 @@ export async function POST(request: NextRequest) {
     price: parseFloat(price),
     bedrooms: parseInt(bedrooms, 10),
     bathrooms: parseInt(bathrooms, 10),
+    location,
+    image,
     createdAt: new Date(),
   };
 
   try {
     await db.collection('properties').insertOne(newProperty);
-    return NextResponse.json({ message: 'Property added successfully' }, { status: 201 });
+    return NextResponse.json(newProperty, { status: 201 });
   } catch (error) {
     console.error('Error adding property:', error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });

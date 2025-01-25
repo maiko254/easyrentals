@@ -17,6 +17,8 @@ interface Property {
   price: number
   bedrooms: number
   bathrooms: number
+  location: string
+  image: string
 }
 
 export default function NewPropertyModal({ isOpen, onClose, onAddProperty }: NewPropertyModalProps) {
@@ -25,6 +27,8 @@ export default function NewPropertyModal({ isOpen, onClose, onAddProperty }: New
   const [price, setPrice] = useState('')
   const [bedrooms, setBedrooms] = useState('')
   const [bathrooms, setBathrooms] = useState('')
+  const [location, setLocation] = useState('')
+  const [image, setImage] = useState('')
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
 
@@ -43,7 +47,7 @@ export default function NewPropertyModal({ isOpen, onClose, onAddProperty }: New
           'Content-Type': 'application/json',
           'X-Token': token,
         },
-        body: JSON.stringify({ title, description, price, bedrooms, bathrooms }),
+        body: JSON.stringify({ title, description, price, bedrooms, bathrooms, location, image }),
       })
 
       if (!response.ok) {
@@ -123,7 +127,7 @@ export default function NewPropertyModal({ isOpen, onClose, onAddProperty }: New
               required
             />
           </div>
-          <div className="mb-6">
+          <div className="mb-4">
             <label htmlFor="bathrooms" className="mb-2 block text-sm font-bold text-gray-700">
               Bathrooms
             </label>
@@ -132,6 +136,32 @@ export default function NewPropertyModal({ isOpen, onClose, onAddProperty }: New
               id="bathrooms"
               value={bathrooms}
               onChange={(e) => setBathrooms(e.target.value)}
+              className="w-full rounded-lg border px-3 py-2 focus:border-blue-500 focus:outline-none"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="location" className="mb-2 block text-sm font-bold text-gray-700">
+              Location
+            </label>
+            <input
+              type="text"
+              id="location"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              className="w-full rounded-lg border px-3 py-2 focus:border-blue-500 focus:outline-none"
+              required
+            />
+          </div>
+          <div className="mb-6">
+            <label htmlFor="image" className="mb-2 block text-sm font-bold text-gray-700">
+              Image URL
+            </label>
+            <input
+              type="text"
+              id="image"
+              value={image}
+              onChange={(e) => setImage(e.target.value)}
               className="w-full rounded-lg border px-3 py-2 focus:border-blue-500 focus:outline-none"
               required
             />

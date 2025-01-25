@@ -12,6 +12,8 @@ interface Property {
   price: number
   bedrooms: number
   bathrooms: number
+  location: string
+  image: string
 }
 
 export default function Dashboard() {
@@ -108,14 +110,16 @@ export default function Dashboard() {
           {properties.map((property) => (
             <div
               key={property.id}
-              className="overflow-hidden rounded-lg bg-gray-100 shadow-md transition-transform transform hover:scale-105 hover:border-blue-500"
+              className="relative overflow-hidden rounded-lg bg-gray-100 shadow-md transition-transform transform hover:scale-105 hover:border-blue-500"
             >
               <div className="p-4">
                 <h3 className="mb-2 text-xl font-semibold">{property.title}</h3>
                 <p className="mb-2 text-lg font-bold text-blue-600">${property.price}/month</p>
                 <p className="text-gray-600">{property.bedrooms} bed • {property.bathrooms} bath</p>
                 <p className="text-gray-600">{property.description}</p>
-                <div className="mt-4 flex justify-center">
+                <p className="text-gray-600">{property.location}</p>
+                <img src={property.image} alt={property.title} className="w-full h-48 object-cover mt-2" />
+                <div className="absolute bottom-4 right-4">
                   <Link href={`/properties/view/${property.id}`}>
                     <button className="bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 focus:outline-none">
                       View Property
