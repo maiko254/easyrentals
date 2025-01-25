@@ -7,14 +7,35 @@ export async function GET(request: NextRequest) {
   const token = request.headers.get('X-Token');
   const { searchParams } = new URL(request.url);
   const query = searchParams.get('query');
+  const sort = searchParams.get('sort') || 'price';
+  const price = searchParams.get('price');
+  const bedrooms = searchParams.get('bedrooms');
+  const bathrooms = searchParams.get('bathrooms');
+  const page = parseInt(searchParams.get('page') || '1', 10);
+  const limit = parseInt(searchParams.get('limit') || '10', 10);
+  const skip = (page - 1) * limit;
 
   const client = await clientPromise;
   const db = client.db('easyrentals');
 
   if (query) {
     try {
-      const properties = await db.collection('properties').find({ location: { $regex: query, $options: 'i' } }).toArray();
-      return NextResponse.json(properties);
+      const filters: any = { location: { $regex: query, $options: 'i' } };
+      if (price) filters.price = { $lte: parseFloat(price) };
+      if (bedrooms) filters.bedrooms = parseInt(bedrooms, 10);
+      if (bathrooms) filters.bathrooms = parseInt(bathrooms, 10);
+
+      const properties = await db.collection('properties')
+        .find(filters)
+        .sort({ [sort]: 1 })
+        .skip(skip)
+        .limit(limit)
+        .toArray();
+
+      const total = await db.collection('properties').countDocuments(filters);
+      const totalPages = Math.ceil(total / limit);
+
+      return NextResponse.json({ properties, totalPages, currentPage: page });
     } catch (error) {
       console.error('Error fetching properties:', error);
       return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
