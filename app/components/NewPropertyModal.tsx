@@ -7,9 +7,19 @@ import { X } from 'lucide-react'
 interface NewPropertyModalProps {
   isOpen: boolean
   onClose: () => void
+  onAddProperty: (property: Property) => void
 }
 
-export default function NewPropertyModal({ isOpen, onClose }: NewPropertyModalProps) {
+interface Property {
+  id: string
+  title: string
+  description: string
+  price: number
+  bedrooms: number
+  bathrooms: number
+}
+
+export default function NewPropertyModal({ isOpen, onClose, onAddProperty }: NewPropertyModalProps) {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [price, setPrice] = useState('')
@@ -40,8 +50,9 @@ export default function NewPropertyModal({ isOpen, onClose }: NewPropertyModalPr
         throw new Error('Failed to add property')
       }
 
+      const newProperty = await response.json()
+      onAddProperty(newProperty)
       onClose()
-      router.push('/dashboard')
     } catch (error) {
       console.error('Error adding property:', error)
       setError('Failed to add property. Please try again.')

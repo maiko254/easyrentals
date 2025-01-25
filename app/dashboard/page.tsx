@@ -54,12 +54,8 @@ export default function Dashboard() {
     fetchProperties()
   }, [router])
 
-  if (loading) {
-    return <div>Loading...</div>
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>
+  const handleAddProperty = (newProperty: Property) => {
+    setProperties((prevProperties) => [...prevProperties, newProperty])
   }
 
   const handleDelete = async (id: string) => {
@@ -85,6 +81,14 @@ export default function Dashboard() {
     }
   }
 
+  if (loading) {
+    return <div>Loading...</div>
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>
+  }
+
   return (
     <div className="min-h-screen bg-gray-100">
       <header className="bg-white py-4 shadow-md">
@@ -106,9 +110,7 @@ export default function Dashboard() {
               <div className="p-4">
                 <h3 className="mb-2 text-xl font-semibold">{property.title}</h3>
                 <p className="mb-2 text-lg font-bold text-blue-600">${property.price}/month</p>
-                <p className="text-gray-600">
-                  {property.bedrooms} bed • {property.bathrooms} bath
-                </p>
+                <p className="text-gray-600">{property.bedrooms} bed • {property.bathrooms} bath</p>
                 <p className="text-gray-600">{property.description}</p>
                 <div className="mt-4 flex justify-between">
                   <Link href={`/properties/edit/${property.id}`}>
@@ -128,7 +130,7 @@ export default function Dashboard() {
           ))}
         </div>
       </div>
-      <NewPropertyModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <NewPropertyModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onAddProperty={handleAddProperty} />
     </div>
   )
 }
