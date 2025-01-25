@@ -54,8 +54,8 @@ export default function FeaturedListings() {
       <div className="container mx-auto px-4">
         <h2 className="mb-8 text-center text-3xl font-bold">Featured Listings</h2>
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {featuredListings.map((listing) => (
-            <div key={listing.id} className="overflow-hidden rounded-lg bg-gray-100 shadow-md">
+          {featuredListings.map((listing, index) => (
+            <div key={`${listing.id}-${index}`} className="overflow-hidden rounded-lg bg-gray-100 shadow-md">
               <Image
                 src={listing.image}
                 alt={listing.title}

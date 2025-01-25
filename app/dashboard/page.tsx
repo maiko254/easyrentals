@@ -107,9 +107,9 @@ export default function Dashboard() {
       <div className="container mx-auto px-4 py-8">
         <h2 className="mb-4 text-xl font-bold">Your Properties</h2>
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {properties.map((property) => (
+          {properties.map((property, index) => (
             <div
-              key={property.id}
+              key={`${property.id}-${index}`}
               className="relative overflow-hidden rounded-lg bg-gray-100 shadow-md transition-transform transform hover:scale-105 hover:border-blue-500"
             >
               <div className="p-4">
