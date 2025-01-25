@@ -8,9 +8,12 @@ import Link from 'next/link'
 interface Listing {
   id: string
   title: string
+  description: string
   price: number
   bedrooms: number
   bathrooms: number
+  location: string
+  image: string
 }
 
 export default function SearchResults() {
@@ -28,7 +31,7 @@ export default function SearchResults() {
     if (query) {
       const fetchResults = async () => {
         try {
-          const response = await fetch(`/api/search?query=${query}`)
+          const response = await fetch(`/api/properties?query=${query}`)
           if (!response.ok) {
             throw new Error('Failed to fetch search results')
           }
@@ -155,20 +158,24 @@ export default function SearchResults() {
           <h2 className="mb-8 text-center text-3xl font-bold">Search Results</h2>
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {results.map((listing) => (
-              <div key={listing.id} className="overflow-hidden rounded-lg bg-gray-100 shadow-md">
-                <Image
-                  src="/placeholder.svg?height=300&width=400"
-                  alt={listing.title}
-                  width={400}
-                  height={300}
-                  className="h-48 w-full object-cover"
-                />
+              <div
+                key={listing.id}
+                className="relative overflow-hidden rounded-lg bg-gray-100 shadow-md transition-transform transform hover:scale-105 hover:border-blue-500"
+              >
                 <div className="p-4">
                   <h3 className="mb-2 text-xl font-semibold">{listing.title}</h3>
                   <p className="mb-2 text-lg font-bold text-blue-600">${listing.price}/month</p>
-                  <p className="text-gray-600">
-                    {listing.bedrooms} bed • {listing.bathrooms} bath
-                  </p>
+                  <p className="text-gray-600">{listing.bedrooms} bed • {listing.bathrooms} bath</p>
+                  <p className="text-gray-600">{listing.description}</p>
+                  <p className="text-gray-600">{listing.location}</p>
+                  <img src={listing.image} alt={listing.title} className="w-full h-48 object-cover mt-2" />
+                  <div className="absolute bottom-4 right-4">
+                    <Link href={`/properties/view/${listing.id}`}>
+                      <button className="bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 focus:outline-none">
+                        View Property
+                      </button>
+                    </Link>
+                  </div>
                 </div>
               </div>
             ))}

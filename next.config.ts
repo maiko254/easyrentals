@@ -1,6 +1,7 @@
-/**import type { NextConfig } from "next";
+const nextConfig = {
+  images: {
+    domains: ['placebear.com'],
+  },
+}
 
-const nextConfig: NextConfig = {
-};
-
-export default nextConfig;*/
+export default nextConfig
