@@ -106,24 +106,21 @@ export default function Dashboard() {
         <h2 className="mb-4 text-xl font-bold">Your Properties</h2>
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {properties.map((property) => (
-            <div key={property.id} className="overflow-hidden rounded-lg bg-gray-100 shadow-md">
+            <div
+              key={property.id}
+              className="overflow-hidden rounded-lg bg-gray-100 shadow-md transition-transform transform hover:scale-105 hover:border-blue-500"
+            >
               <div className="p-4">
                 <h3 className="mb-2 text-xl font-semibold">{property.title}</h3>
                 <p className="mb-2 text-lg font-bold text-blue-600">${property.price}/month</p>
                 <p className="text-gray-600">{property.bedrooms} bed • {property.bathrooms} bath</p>
                 <p className="text-gray-600">{property.description}</p>
-                <div className="mt-4 flex justify-between">
-                  <Link href={`/properties/edit/${property.id}`}>
-                    <button className="bg-yellow-500 px-4 py-2 text-white hover:bg-yellow-600 focus:outline-none">
-                      Edit
+                <div className="mt-4 flex justify-center">
+                  <Link href={`/properties/view/${property.id}`}>
+                    <button className="bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 focus:outline-none">
+                      View Property
                     </button>
                   </Link>
-                  <button
-                    onClick={() => handleDelete(property.id)}
-                    className="bg-red-500 px-4 py-2 text-white hover:bg-red-600 focus:outline-none"
-                  >
-                    Delete
-                  </button>
                 </div>
               </div>
             </div>
