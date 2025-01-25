@@ -26,17 +26,20 @@ export default function SearchResults() {
   const [price, setPrice] = useState('')
   const [bedrooms, setBedrooms] = useState('')
   const [bathrooms, setBathrooms] = useState('')
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
 
   useEffect(() => {
     if (query) {
       const fetchResults = async () => {
         try {
-          const response = await fetch(`/api/properties?query=${query}`)
+          const response = await fetch(`/api/properties?query=${query}&sort=${sort}&price=${price}&bedrooms=${bedrooms}&bathrooms=${bathrooms}&page=${page}`)
           if (!response.ok) {
             throw new Error('Failed to fetch search results')
           }
           const data = await response.json()
-          setResults(data)
+          setResults(data.properties)
+          setTotalPages(data.totalPages)
         } catch (error) {
           if (error instanceof Error) {
             setError(error.message)
@@ -50,15 +53,15 @@ export default function SearchResults() {
 
       fetchResults()
     }
-  }, [query])
+  }, [query, sort, price, bedrooms, bathrooms, page])
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
-    // Implement search functionality here
+    setPage(1)
   }
 
   const handleFilter = () => {
-    // Implement filter functionality here
+    setPage(1)
   }
 
   if (loading) {
@@ -179,6 +182,23 @@ export default function SearchResults() {
                 </div>
               </div>
             ))}
+          </div>
+          <div className="flex justify-center mt-8">
+            <button
+              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+              disabled={page === 1}
+              className="px-4 py-2 mx-1 bg-gray-300 rounded disabled:opacity-50"
+            >
+              Previous
+            </button>
+            <span className="px-4 py-2 mx-1">{page} of {totalPages}</span>
+            <button
+              onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
+              disabled={page === totalPages}
+              className="px-4 py-2 mx-1 bg-gray-300 rounded disabled:opacity-50"
+            >
+              Next
+            </button>
           </div>
         </main>
       </div>
