@@ -1,6 +1,6 @@
 'use client'
 
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 
@@ -17,6 +17,7 @@ interface Listing {
 
 export default function SearchResults() {
   const searchParams = useSearchParams()
+  const router = useRouter()
   const query = searchParams.get('query')
   const price = searchParams.get('price')
   const [results, setResults] = useState<Listing[]>([])
@@ -27,6 +28,8 @@ export default function SearchResults() {
   const [bathrooms, setBathrooms] = useState('')
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
+  const [location, setLocation] = useState(query || '')
+  const [maxPrice, setMaxPrice] = useState(price || '')
 
   useEffect(() => {
     const fetchResults = async () => {
@@ -55,6 +58,7 @@ export default function SearchResults() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     setPage(1)
+    router.push(`/search-results?query=${location}&price=${maxPrice}`)
   }
 
   const handleFilter = () => {
@@ -77,7 +81,16 @@ export default function SearchResults() {
             <input
               type="text"
               placeholder="Enter location..."
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
               className="w-full max-w-md rounded-l-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
+            />
+            <input
+              type="number"
+              placeholder="Max price"
+              value={maxPrice}
+              onChange={(e) => setMaxPrice(e.target.value)}
+              className="w-full max-w-md rounded-l-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none ml-2"
             />
             <button
               type="submit"
@@ -119,7 +132,7 @@ export default function SearchResults() {
               type="number"
               id="price"
               value={price || ''}
-              onChange={(e) => setPrice(e.target.value)}
+              onChange={(e) => setMaxPrice(e.target.value)}
               className="w-full rounded-lg border px-3 py-2 focus:border-blue-500 focus:outline-none"
             />
           </div>
@@ -157,9 +170,9 @@ export default function SearchResults() {
         <main className="w-3/4">
           <h2 className="mb-8 text-center text-3xl font-bold">Search Results</h2>
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {results.map((listing) => (
+            {results.map((listing, index) => (
               <div
-                key={listing.id}
+                key={`${listing.id}-${index}`}
                 className="relative overflow-hidden rounded-lg bg-gray-100 shadow-md transition-transform transform hover:scale-105 hover:border-blue-500"
               >
                 <div className="p-4">
@@ -168,6 +181,7 @@ export default function SearchResults() {
                   <p className="text-gray-600">{listing.bedrooms} bed • {listing.bathrooms} bath</p>
                   <p className="text-gray-600">{listing.description}</p>
                   <p className="text-gray-600">{listing.location}</p>
+                  <p className="text-gray-600">ID: {listing.id}</p>
                   <img src={listing.image} alt={listing.title} className="w-full h-48 object-cover mt-2" />
                   <div className="absolute bottom-4 right-4">
                     <Link href={`/properties/view/${listing.id}`}>

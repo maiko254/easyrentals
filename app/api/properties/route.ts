@@ -35,7 +35,14 @@ export async function GET(request: NextRequest) {
       const total = await db.collection('properties').countDocuments(filters);
       const totalPages = Math.ceil(total / limit);
 
-      return NextResponse.json({ properties, totalPages, currentPage: page });
+      // Map _id to id
+      const mappedProperties = properties.map(property => ({
+        ...property,
+        id: property._id,
+        _id: undefined
+      }));
+
+      return NextResponse.json({ properties: mappedProperties, totalPages, currentPage: page });
     } catch (error) {
       console.error('Error fetching properties:', error);
       return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
@@ -58,7 +65,15 @@ export async function GET(request: NextRequest) {
 
   try {
     const properties = await db.collection('properties').find({ userId: user._id }).toArray();
-    return NextResponse.json(properties);
+
+    // Map _id to id
+    const mappedProperties = properties.map(property => ({
+        ...property,
+        id: property._id,
+        _id: undefined
+      }));
+
+    return NextResponse.json(mappedProperties);
   } catch (error) {
     console.error('Error fetching properties:', error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
