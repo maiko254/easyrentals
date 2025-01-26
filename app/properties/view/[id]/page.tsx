@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { Mail, Edit, Trash } from 'lucide-react'
+import EditPropertyModal from '../../../components/EditPropertyModal'
 
 interface Property {
   id: string
@@ -14,7 +15,7 @@ interface Property {
   bathrooms: number
   location: string
   image: string
-  ownerId: string
+  userId: string
 }
 
 export default function PropertyDetail() {
@@ -22,6 +23,7 @@ export default function PropertyDetail() {
   const [property, setProperty] = useState<Property | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -49,9 +51,18 @@ export default function PropertyDetail() {
 
   const handleDelete = async () => {
     try {
+      const token = localStorage.getItem('token')
+      if (!token) {
+        throw new Error('Missing token')
+      }
+
       const response = await fetch(`/api/properties/${id}`, {
         method: 'DELETE',
+        headers: {
+          'X-Token': token,
+        }
       })
+      
       if (!response.ok) {
         throw new Error('Failed to delete property')
       }
@@ -63,6 +74,10 @@ export default function PropertyDetail() {
         setError('An unknown error occurred')
       }
     }
+  }
+
+  const handleUpdateProperty = (updatedProperty: Property) => {
+    setProperty(updatedProperty)
   }
 
   if (loading) {
@@ -100,16 +115,14 @@ export default function PropertyDetail() {
               <p className="text-gray-600">{property.description}</p>
               <p className="text-gray-600">{property.location}</p>
               <div className="mt-4 flex space-x-4">
-                <Link href={`/contact-owner/${property.ownerId}`}>
+                <Link href={`/contact-owner/${property.userId}`}>
                   <div title="Contact Property Owner">
                     <Mail className="text-green-500 hover:text-green-600 cursor-pointer" />
                   </div>
                 </Link>
-                <Link href={`/properties/edit/${property.id}`}>
-                  <div title="Edit Property">
-                    <Edit className="text-yellow-500 hover:text-yellow-600 cursor-pointer" />
-                  </div>
-                </Link>
+                <div title="Edit Property" onClick={() => setIsEditModalOpen(true)}>
+                  <Edit className="text-yellow-500 hover:text-yellow-600 cursor-pointer" />
+                </div>
                 <div title="Delete Property" onClick={handleDelete}>
                   <Trash className="text-red-500 hover:text-red-600 cursor-pointer" />
                 </div>
@@ -118,6 +131,12 @@ export default function PropertyDetail() {
           </div>
         </div>
       </div>
+      <EditPropertyModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        property={property}
+        onUpdateProperty={handleUpdateProperty}
+      />
     </div>
   )
 }
